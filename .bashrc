@@ -24,7 +24,7 @@ alias ost='cd ~/.config/st'
 alias oblocks=' cd ~/.config/dwmblocks'
 alias obin='cd ~/.local/bin'
 
-alias dotfiles=’/usr/bin/git --git-dir=$HOME/.dotfiles/.git --work-tree=$HOME
+alias push='cd /home/iverson/.dotfiles && ./dotfiles.sh'
 
 # paths
 export PATH="$PATH:$HOME/.local/bin/scripts"

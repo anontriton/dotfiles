@@ -25,8 +25,7 @@ if [[ $gs == *"modified"* ]]; then
   echo "push"
 fi
 
-
 # push to Github
-git pull --rebase origin main
-git commit -m "New backup `date +'%Y-%m-%d %H:%M:%S'`";
+git pull origin main
+git commit -a -m "New backup `date +'%Y-%m-%d %H:%M:%S'`";
 git push origin mian
