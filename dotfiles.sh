@@ -28,4 +28,4 @@ fi
 # push to Github
 git pull origin main
 git commit -a -m "New backup `date +'%Y-%m-%d %H:%M:%S'`";
-git push origin mian
+git push origin main
