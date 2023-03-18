@@ -1,0 +1,31 @@
+# Increase volume
+"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && kill -39 $(pidof dwmblocks)"
+   XF86AudioRaiseVolume
+
+# Decrease volume
+"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && kill -39 $(pidof dwmblocks)"
+   XF86AudioLowerVolume
+
+# Mute volume
+"wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && kill -39 $(pidof dwmblocks)"
+   XF86AudioMute
+
+# Mute microphone
+"pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+   XF86AudioMicMute
+
+# Decrease screen brightness
+"xbacklight -dec 5.0 && kill -40 $(pidof dwmblocks)"
+   XF86MonBrightnessDown
+
+# Increase screen brightness
+"xbacklight -inc 5.0 && kill -40 $(pidof dwmblocks)"
+   XF86MonBrightnessUp
+
+# Decrease keyboard backlight
+"xbacklight -ctrl tpacpi::kbd_backlight -dec 50"
+   Mod1 + XF86MonBrightnessDown
+
+# Increase keyboard backlight
+"xbacklight -ctrl tpacpi::kbd_backlight -inc 50"
+   Mod1 + XF86MonBrightnessUp
