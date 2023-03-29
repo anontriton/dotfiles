@@ -51,4 +51,3 @@ redshift -l $(curl -s "https://location.services.mozilla.com/v1/geolocate?key=ge
 # start window manager
 dwmblocks &
 exec dwm
-

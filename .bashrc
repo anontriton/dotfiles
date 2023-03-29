@@ -19,11 +19,6 @@ alias pacu='checkupdates | wc -l'
 alias vim='nvim'
 alias nf='neofetch'
 
-alias odwm='cd ~/.config/dwm'
-alias ost='cd ~/.config/st'
-alias oblocks=' cd ~/.config/dwmblocks'
-alias obin='cd ~/.local/bin'
-
 alias pushfiles='cd /home/iverson/.dotfiles && ./dotfiles.sh'
 
 # paths
