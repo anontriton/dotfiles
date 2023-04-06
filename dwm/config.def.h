@@ -1,23 +1,23 @@
 /* configuration file for iverson's build of dwm */
 
-/* current dependencies:
+/* installed programs:
  * dmenu, st,
- * firefox, thunar
+ * firefox, pcmanfm, ranger
  * ttf-hack-nerd, ttf-joypixels
  */
 
 /* appearance */
 static const unsigned int borderpx  = 1;    /* border pixel of windows */
 static const unsigned int snap      = 12;   /* snap pixel */
-static const unsigned int gappih    = 10;    /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;    /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;    /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 10;    /* vert outer gap between windows and screen edge */
+static const unsigned int gappih    = 6;    /* horiz inner gap between windows */
+static const unsigned int gappiv    = 6;    /* vert inner gap between windows */
+static const unsigned int gappoh    = 8;    /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 12;    /* vert outer gap between windows and screen edge */
 static const int smartgaps          = 0;    /* 1 means no outer gap when there is only one window */
 static const int swallowfloating    = 0;    /* 1 means swallow floating windows */
 static const int showbar            = 1;    /* 0 means no bar */
 static const int topbar             = 1;    /* 0 means bottom bar */
-static unsigned int baralpha        = 255;  /* choose values from 0 - 255 */
+static unsigned int baralpha        = 220;  /* choose values from 0 - 255 */
 static unsigned int borderalpha     = 255;  /* 255 is opaque */
 
 /* fonts */
@@ -26,7 +26,7 @@ static const char *fonts[]          = { "Hack Nerd Font:size=10:antialias=true:a
 static const char dmenufont[]       =   "Hack Nerd Font:size=10:antialias=true:autohint=true";
 
 /* colors */
-#include "/home/iverson/.config/dwm/themes/default.h" /* importing theme */
+#include "/home/iverson/.config/dwm/themes/catppuccin.h" /* importing theme */
 static const char *colors[][3] =
 {   /*               fg     bg     border */
     [SchemeNorm] = { col_3, col_1, col_2 },
@@ -39,9 +39,11 @@ typedef struct {
     const void *cmd;
 } Sp;
 const char *spcmd1[] = { "st", "-n", "spterm", "-g", "120x40", NULL };
+const char *spcmd2[] = { "st", "-n", "spfm", "-g", "120x40", "-e", "ranger", NULL };
 static Sp scratchpads[] = {
     /* name          cmd  */
     {"spterm",       spcmd1},
+    {"spfm",       spcmd2},
 };
 
 /* tagging */
@@ -51,11 +53,12 @@ static const Rule rules[] = {
     * WM_CLASS(STRING) = instance, class
     * WM_NAME(STRING) = title
     */
-/*                                                                 (swallow)                      */
+/*                                                                (swallow)                      */
 /* class         instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 { "st-256color", NULL,     NULL,           0,         0,          1,           0,        -1 },
 { "st-256color", "spterm", NULL,           SPTAG(0),  1,          1,           0,        -1 }, /* scratchpad 1 */
-{ "Thunar",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+{ "st-256color", "spfm",   NULL,           SPTAG(1),  1,          1,           0,        -1 }, /* scratchpad 2 */
+{ "Pcmanfm",     NULL,     NULL,           0,         0,          1,           0,        -1 },
 { NULL,          NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
@@ -86,10 +89,12 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_1, "-nf", col_3, "-sb", col_4, "-sf", col_a, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont,
+                                  "-nb", col_1, "-nf", col_3,
+                                  "-sb", col_4, "-sf", col_a, NULL };
 static const char *termcmd[]     = { "st", NULL };
 static const char *browser[]     = { "firefox", NULL };
-static const char *filemanager[] = { "thunar", NULL };
+static const char *filemanager[] = { "pcmanfm", NULL };
 
 /* keyboard bindings */
 static const Key keys[] = {
@@ -125,8 +130,7 @@ static const Key keys[] = {
     { MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
     { MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
     { MODKEY|ShiftMask,             XK_Return, togglescratch,  {.ui = 0 } }, /* open first scratchpad */
-    //{ MODKEY,                       NULL,      togglescratch,  {.ui = 1 } }, /* open second scratchpad */
-    //{ MODKEY,                       NULL,      togglescratch,  {.ui = 2 } }, /* open third scratchpad */
+    { MODKEY|ControlMask,           XK_Return, togglescratch,  {.ui = 1 } }, /* open second scratchpad */
     TAGKEYS(                        XK_1,                      0)
     TAGKEYS(                        XK_2,                      1)
     TAGKEYS(                        XK_3,                      2)
