@@ -143,7 +143,7 @@ static const Key keys[] = {
     
     /* scratchpads */
     { MODKEY|ShiftMask,             XK_Return, togglescratch,  {.ui = 0 } }, /* open first scratchpad */
-    { MODKEY|ShiftMask,             XK_o,      togglescratch,  {.ui = 1 } }, /* open second scratchpad */
+    { MODKEY|ShiftMask,             XK_f,      togglescratch,  {.ui = 1 } }, /* open second scratchpad */
     
     /* tags */
     TAGKEYS(                        XK_1,                      0)
