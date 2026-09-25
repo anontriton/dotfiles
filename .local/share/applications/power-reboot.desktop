@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Reboot
+Comment=Restart the computer
+Exec=/home/iverson/.local/bin/power-confirm reboot
+Icon=system-reboot
+Terminal=false
+Categories=System;

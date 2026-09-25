@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily dotfiles backup
+
+[Timer]
+OnCalendar=daily
+# Run at next boot if the laptop was off at midnight
+Persistent=true
+RandomizedDelaySec=15min
+
+[Install]
+WantedBy=timers.target

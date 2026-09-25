@@ -1,0 +1,33 @@
+# swaylock-effects, Catppuccin Mocha: blurred wallpaper + small ring shown only while typing
+image=/home/iverson/wallpapers/lucy.jpg
+scaling=fill
+effect-blur=10x3
+
+# Small, thin ring with no text; hidden until you start typing
+indicator-radius=28
+indicator-thickness=3
+hide-keyboard-layout
+disable-caps-lock-text
+font=Hack Nerd Font
+
+color=1e1e2e
+inside-color=00000000
+line-color=00000000
+separator-color=00000000
+text-color=00000000
+ring-color=585b7080
+key-hl-color=89b4fa
+bs-hl-color=f38ba8
+
+inside-ver-color=00000000
+ring-ver-color=cba6f7
+text-ver-color=00000000
+inside-wrong-color=00000000
+ring-wrong-color=f38ba8
+text-wrong-color=00000000
+inside-clear-color=00000000
+ring-clear-color=f9e2af
+text-clear-color=00000000
+inside-caps-lock-color=00000000
+ring-caps-lock-color=fab387
+text-caps-lock-color=00000000

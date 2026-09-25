@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=nnn (foot)
+Comment=Open folders in nnn inside foot
+Exec=foot -e nnn %f
+Terminal=false
+NoDisplay=true
+MimeType=inode/directory;

@@ -1,0 +1,10 @@
+[Unit]
+Description=Lock after 5 min idle, screen off after 5.5 min, lock before sleep
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/swayidle -w timeout 300 'swaylock -f' timeout 330 'wlr-randr --output eDP-1 --off' resume 'wlr-randr --output eDP-1 --on' before-sleep 'swaylock -f'
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

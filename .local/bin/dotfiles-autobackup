@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Daily dotfiles backup, run by ~/.config/systemd/user/dotfiles-backup.timer.
+# Commits changes to tracked files (plus new wallpapers), scans the unpushed commits
+# for secrets with gitleaks, then pushes. Sends a notification only when something goes wrong.
+# Logs: journalctl --user -u dotfiles-backup
+#
+# If a push is blocked for a possible secret:
+#   1. See which file/line was flagged: journalctl --user -u dotfiles-backup
+#   2. Move the secret out of the tracked file (into ~/.zshrc.local, which is never tracked)
+#   3. Undo the unpushed auto-commits, keeping your changes:  dotfiles reset --soft origin/main
+#   4. Run the backup again:  systemctl --user start dotfiles-backup
+#   (If it's a false positive, add the line's fingerprint from the log to ~/.gitleaksignore.)
+
+set -uo pipefail
+
+DOTFILES_DIR="$HOME/.dotfiles"
+dot() { git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"; }
+
+notify() { # notify <urgency 0-2> <title> <body>
+  echo "$2: $3" >&2
+  gdbus call --session --dest org.freedesktop.Notifications \
+    --object-path /org/freedesktop/Notifications \
+    --method org.freedesktop.Notifications.Notify \
+    "dotfiles" 0 "" "$2" "$3" "[]" "{'urgency': <byte $1>}" 0 >/dev/null 2>&1 || true
+}
+fail() { notify 2 "Dotfiles backup failed" "$1"; exit 1; }
+
+cd "$HOME" || fail "Can't cd to home"
+[[ -d $DOTFILES_DIR ]] || fail "$DOTFILES_DIR not found"
+
+# 1. Stage changes to tracked files (including deletions) and any new wallpapers
+dot add -u || fail "git add failed"
+[[ -d $HOME/wallpapers ]] && { dot add "$HOME/wallpapers" || fail "Adding wallpapers failed"; }
+
+# 2. Commit if anything changed: "auto backup <date>", with the changed files in the body
+if ! dot diff --cached --quiet; then
+  changed=$(dot diff --cached --name-status)
+  dot commit -q -m "auto backup $(date +%F)" -m "$changed" || fail "git commit failed"
+  echo "Committed: $(dot diff HEAD~1 --name-only | wc -l) file(s)"
+fi
+
+# 3. Nothing to push? Done.
+unpushed=$(dot rev-list --count origin/main..main 2>/dev/null) || fail "Can't compare with origin/main"
+(( unpushed > 0 )) || { echo "Nothing to push"; exit 0; }
+
+# 4. Scan every unpushed commit for secrets before anything leaves the machine
+if ! command -v gitleaks >/dev/null; then
+  fail "gitleaks isn't installed, so nothing was pushed. Install it: sudo pacman -S gitleaks"
+fi
+if ! gitleaks git "$DOTFILES_DIR" --log-opts="origin/main..main" --redact --no-banner --verbose >&2; then
+  fail "Possible secret found, push blocked ($unpushed unpushed commit(s)). See: journalctl --user -u dotfiles-backup"
+fi
+
+# 5. Push, unless offline (commits wait locally and go out on the next run)
+if [[ $(nmcli -t networking connectivity 2>/dev/null) != full ]]; then
+  echo "Offline; $unpushed commit(s) will be pushed next run"
+  exit 0
+fi
+dot push -q origin main || fail "git push failed ($unpushed commit(s) waiting). Try: dotfiles push"
+echo "Pushed $unpushed commit(s)"

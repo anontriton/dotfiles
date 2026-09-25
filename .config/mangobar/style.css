@@ -1,0 +1,64 @@
+* {
+  font-family: "Hack Nerd Font";
+  font-weight: bold;
+  border-radius: 18px;
+  margin: 4px 6px;
+  padding: 0px 8px;
+}
+
+#bar {
+  background-color: none; /* transparent bar canvas */
+  margin: 2px 2px;
+}
+
+#bar.sel {
+  background: none;
+}
+
+#tags {
+  background-color: #cba6f7; /* mauve */
+  color: #1e1e2e; /* base (dark text) */
+  padding: 0px 8px;
+  margin: 0px 4px;
+
+}
+
+#window {
+  background-color: #313244; /* surface0 */
+  color: #cdd6f4; /* cdd6f4 */
+}
+
+#cpu {
+  background-color: #f9e2af; /* yellow */
+  color: #1e1e2e; /* base */
+}
+
+#mem {
+  background-color: #fab387; /* peach */
+  color: #1e1e2e; /* base */
+}
+
+#volume {
+  background-color: #a6e3a1; /* green */
+  color: #1e1e2e; /* base */
+}
+
+#brightness {
+  background-color: #f38ba8; /* red */
+  color: #1e1e2e; /* base */
+}
+
+#battery {
+  background-color: #a6e3a1; /* green */
+  color: #1e1e2e; /* base */
+}
+
+#clock.date {
+  background-color: #74c7ec; /* sapphire */
+  color: #1e1e2e; /* base */
+}
+
+#clock {
+  background-color: #89b4fa; /* blue */
+  color: #1e1e2e; /* base */
+}

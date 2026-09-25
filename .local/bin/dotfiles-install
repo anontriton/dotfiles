@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+# Set up a fresh Arch install with my packages and dotfiles (mango + foot + Catppuccin Mocha).
+# Safe to re-run: installed packages and finished steps are skipped.
+#
+# On a new machine (after a base Arch install with a user account, sudo, and internet):
+#   sudo pacman -S --needed git curl
+#   curl -fsSL https://raw.githubusercontent.com/anontriton/dotfiles/main/.local/bin/dotfiles-install -o /tmp/dotfiles-install
+#   bash /tmp/dotfiles-install https://github.com/anontriton/dotfiles.git
+#
+# On a machine that already has the dotfiles checked out, just run: dotfiles-install
+#
+# Not covered by this script (do by hand afterwards):
+#   - System config in /etc: bootloader, TLP, snapper/snap-pac, zram-generator, iwd/Wi-Fi setup
+#   - Hardware packages: intel-ucode or amd-ucode, GPU drivers (e.g. intel-media-driver), sof-firmware
+#   - Logins: gh auth login + gh auth setup-git (needed for the daily backup to push), SSH keys, Wi-Fi passwords, Chrome sign-in, Bitwarden
+#   - Apps: google-chrome (AUR), Claude Code, ollama + the `quickdev` model used by the `ask` alias,
+#     obsidian, bitwarden-cli, wlsunset
+#   - Screen name: swayidle turns off output eDP-1; check yours with `wlr-randr` and edit
+#     ~/.config/systemd/user/swayidle.service if it differs
+
+set -euo pipefail
+
+REPO_URL="${1:-}"
+DOTFILES_DIR="$HOME/.dotfiles"
+dot() { git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"; }
+
+step() { printf '\n\e[1;38;2;203;166;247m==> %s\e[0m\n' "$*"; }   # mauve
+warn() { printf '\e[1;38;2;250;179;135m  ! %s\e[0m\n' "$*"; }      # peach
+ok()   { printf '\e[38;2;166;227;161m  ✓ %s\e[0m\n' "$*"; }        # green
+
+[[ -f /etc/arch-release ]] || { echo "This script is for Arch Linux."; exit 1; }
+[[ $EUID -ne 0 ]] || { echo "Run as your normal user, not root (it uses sudo when needed)."; exit 1; }
+
+# ---------------------------------------------------------------- packages
+
+PACMAN_PKGS=(
+  # base / build
+  base-devel git github-cli curl unzip
+  # shell
+  zsh zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting
+  starship zoxide fzf fd ripgrep eza bat git-delta
+  # editor + dev
+  neovim tree-sitter-cli clang npm python
+  # terminal apps
+  lazygit btop fastfetch nnn trash-cli chafa file
+  # dotfiles auto-backup (secret scan before each push)
+  gitleaks
+  # desktop (mango's companions)
+  foot fuzzel fnott swaybg swayidle wlr-randr grim slurp
+  wl-clipboard wl-clip-persist cliphist brightnessctl lxqt-policykit
+  xdg-utils xdg-desktop-portal-gtk gsettings-desktop-schemas
+  # audio + network
+  pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber libpulse gst-plugin-pipewire
+  networkmanager
+  # fonts + viewers
+  ttf-hack-nerd imv zathura zathura-pdf-mupdf
+  # mangobar build deps (built from source below)
+  meson ninja cjson wayland wayland-protocols fcft tllist pixman cairo pango systemd-libs gdk-pixbuf2
+)
+
+AUR_PKGS=(
+  mangowm-git              # window manager
+  swaylock-effects         # replaces swaylock (say yes if asked to remove it)
+  bibata-cursor-theme-bin  # cursor
+  #google-chrome
+)
+
+# Machine-specific and optional packages are listed at the top under "Not covered".
+
+step "Installing official packages"
+sudo pacman -Syu --needed "${PACMAN_PKGS[@]}"
+
+step "Installing AUR packages"
+if ! command -v paru >/dev/null; then
+  tmp=$(mktemp -d)
+  git clone --depth 1 https://aur.archlinux.org/paru-bin.git "$tmp/paru-bin"
+  (cd "$tmp/paru-bin" && makepkg -si --noconfirm)
+  rm -rf "$tmp"
+fi
+paru -S --needed "${AUR_PKGS[@]}"
+
+step "Building mangobar"
+if command -v mangobar >/dev/null; then
+  ok "mangobar already installed"
+else
+  mkdir -p "$HOME/src"
+  [[ -d $HOME/src/mangobar ]] || git clone https://github.com/mangowm/mangobar.git "$HOME/src/mangobar"
+  cd "$HOME/src/mangobar"
+  [[ -d build ]] || meson setup build -Dprefix=/usr
+  ninja -C build && sudo ninja -C build install
+  cd - >/dev/null
+fi
+
+# ---------------------------------------------------------------- dotfiles
+
+step "Checking out dotfiles"
+if [[ -d $DOTFILES_DIR ]]; then
+  ok "$DOTFILES_DIR already exists"
+else
+  [[ -n $REPO_URL ]] || { echo "Pass the repo URL: dotfiles-install <repo-url>"; exit 1; }
+  git clone --bare "$REPO_URL" "$DOTFILES_DIR"
+  if ! dot checkout 2>/dev/null; then
+    # Files like a default ~/.zshrc would be overwritten; move them aside first.
+    backup="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+    warn "Moving existing files that would be overwritten to $backup"
+    conflicts=$(dot checkout 2>&1 | sed -n 's/^\t//p' || true)
+    while IFS= read -r f; do
+      [[ -n $f ]] || continue
+      mkdir -p "$backup/$(dirname "$f")"
+      mv "$HOME/$f" "$backup/$f"
+    done <<< "$conflicts"
+    dot checkout
+  fi
+fi
+# Ignore everything in ~ except wallpapers/, so new wallpapers show up in `dotfiles status`
+# (info/exclude isn't cloned, so it's recreated here)
+if ! grep -qx '!/wallpapers/' "$DOTFILES_DIR/info/exclude" 2>/dev/null; then
+  mkdir -p "$DOTFILES_DIR/info"
+  printf '/*\n!/wallpapers/\n' >> "$DOTFILES_DIR/info/exclude"
+fi
+dot config status.showUntrackedFiles normal
+
+# ---------------------------------------------------------------- extras not in the repo
+
+step "Shell plugins and tools"
+if [[ -d $HOME/.local/share/zsh/fzf-tab ]]; then
+  ok "fzf-tab already installed"
+else
+  git clone --depth 1 https://github.com/Aloxaf/fzf-tab "$HOME/.local/share/zsh/fzf-tab"
+fi
+mkdir -p "$HOME/.config/nnn/plugins"
+[[ -f $HOME/.config/nnn/plugins/preview-tui ]] || cp /usr/share/nnn/plugins/preview-tui "$HOME/.config/nnn/plugins/"
+bat cache --build >/dev/null && ok "bat themes built"
+
+step "Trash folder"
+mkdir -p "$HOME/.local/share/Trash/files" "$HOME/.local/share/Trash/info"
+[[ -e $HOME/trash ]] || ln -s "$HOME/.local/share/Trash" "$HOME/trash"
+ok "~/trash -> ~/.local/share/Trash"
+
+step "Cursor and dark mode"
+mkdir -p "$HOME/.icons/default"
+printf '[Icon Theme]\nInherits=Bibata-Original-Amber\n' > "$HOME/.icons/default/index.theme"
+if gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null; then
+  gsettings set org.gnome.desktop.interface cursor-theme Bibata-Original-Amber
+  gsettings set org.gnome.desktop.interface cursor-size 20
+  ok "dark mode + Bibata-Original-Amber (20)"
+else
+  warn "gsettings unavailable here; re-run this script once logged in to apply dark mode + cursor"
+fi
+
+step "Services"
+# Enable but don't start NetworkManager: starting it now could fight iwd (which a fresh
+# Arch install often uses to get online) and drop the connection mid-script.
+if systemctl is-active --quiet NetworkManager.service; then
+  ok "NetworkManager already running"
+else
+  sudo systemctl enable NetworkManager.service
+  warn "NetworkManager enabled; it takes over networking after a reboot"
+  warn "If iwd was managing Wi-Fi on its own, disable it: sudo systemctl disable iwd"
+fi
+if systemctl --user daemon-reload 2>/dev/null && systemctl --user enable swayidle.service 2>/dev/null &&
+   systemctl --user enable --now dotfiles-backup.timer 2>/dev/null; then
+  ok "swayidle enabled (starts with the graphical session)"
+  ok "daily dotfiles backup enabled"
+else
+  warn "No user session here (SSH?); after logging in, run:"
+  warn "  systemctl --user enable swayidle.service && systemctl --user enable --now dotfiles-backup.timer"
+fi
+
+step "Default shell"
+if [[ $(getent passwd "$USER" | cut -d: -f7) != */zsh ]]; then
+  chsh -s /usr/bin/zsh
+else
+  ok "zsh already default"
+fi
+
+step "Neovim plugins"
+nvim --headless +qa >/dev/null 2>&1 && ok "plugins installed"
+
+# ---------------------------------------------------------------- manual bits
+
+step "Things to check by hand"
+grep -q 'output eDP-1' "$HOME/.config/systemd/user/swayidle.service" &&
+  warn "swayidle turns off output eDP-1; check the name with wlr-randr on a desktop/other laptop"
+
+printf '\nDone. Log out and log in on tty1: zsh starts mango automatically.\n'

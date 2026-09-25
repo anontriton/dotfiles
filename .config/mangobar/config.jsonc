@@ -1,0 +1,61 @@
+{
+    "layer": "top",
+    "height": 18,
+    "buffer-scale": 1,
+
+    "modules-left": [
+        "workspaces",
+        "window"
+    ],
+    "modules-right": [
+        "cpu",
+        "memory",
+        "pulseaudio",
+        "backlight",
+	"battery",
+        "clock#date",
+        "clock#time"
+    ],
+
+    "workspaces": {
+        "hide-empty": true,
+        "on-click": "activate",
+        "on-click-right": "toggle"
+    },
+    "window": {
+        "format": "{}"
+    },
+    "cpu": {
+        "format": " {load}%"
+    },
+    "memory": {
+        "format": " {}%"
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 {volume}%",
+        "icons": ["󰝟", "󰕿", "󰕾"],
+        "on-click": "wpctl set-mute @DEFAULT_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_SINK@ 5%-"
+    },
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟"],
+	"on-scroll-up": "brightnessctl set +2%",
+        "on-scroll-down": "brightnessctl set 2%-"
+    },
+    "battery": {
+        "format": "{icon} {percent}% {ac}",
+        "icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "icon-charging": "󰂄",
+        "icon-full": "󰁹",
+        "icon-ac": ""
+    },
+    "clock#date": {
+        "format": " {:L%b%d·%A}"
+    },
+    "clock#time": {
+        "format": " {:L%H:%M}"
+    }
+}

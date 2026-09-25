@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Lock
+Comment=Lock the screen
+Exec=swaylock
+Icon=system-lock-screen
+Terminal=false
+Categories=System;

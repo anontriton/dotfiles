@@ -1,0 +1,7 @@
+[Unit]
+Description=Commit and push dotfiles (secret-scanned)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/dotfiles-autobackup

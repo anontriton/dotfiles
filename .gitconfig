@@ -1,0 +1,33 @@
+[user]
+	name = Iverson Lai
+	email = 105322573+anontriton@users.noreply.github.com
+[init]
+	defaultBranch = main
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true            # n / N jump between files
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Catppuccin Mocha
+	file-style = "#89b4fa" bold
+	file-decoration-style = "#89b4fa" ul
+	hunk-header-style = file line-number syntax
+	hunk-header-decoration-style = "#585b70" box
+	minus-style = syntax "#493447"
+	minus-emph-style = bold syntax "#694559"
+	plus-style = syntax "#394545"
+	plus-emph-style = bold syntax "#4e6356"
+	line-numbers-minus-style = "#f38ba8"
+	line-numbers-plus-style = "#a6e3a1"
+	line-numbers-zero-style = "#6c7086"
+[merge]
+	conflictstyle = zdiff3
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

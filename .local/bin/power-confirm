@@ -1,0 +1,13 @@
+#!/bin/sh
+# Usage: power-confirm poweroff|reboot
+# Asks for confirmation in fuzzel before running systemctl.
+case "$1" in
+    poweroff) label="Power off" ;;
+    reboot)   label="Reboot" ;;
+    *) echo "usage: $0 poweroff|reboot" >&2; exit 1 ;;
+esac
+
+# "No" is listed first so pressing Enter straight away is safe.
+choice=$(printf 'No\nYes\n' | fuzzel --dmenu --prompt "$label? " --placeholder "" --lines 2 --width 20)
+
+[ "$choice" = "Yes" ] && exec systemctl "$1"

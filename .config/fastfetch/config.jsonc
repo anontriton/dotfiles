@@ -1,0 +1,43 @@
+// Catppuccin Mocha
+// mauve cba6f7 · blue 89b4fa · sapphire 74c7ec · green a6e3a1
+// yellow f9e2af · peach fab387 · red f38ba8 · overlay0 6c7086
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "builtin",
+    "color": { "1": "#cba6f7", "2": "#cba6f7" },
+    "padding": { "top": 1, "left": 2, "right": 4 }
+  },
+  "display": {
+    "separator": "  ",
+    "color": { "keys": "#cba6f7", "title": "#cba6f7", "separator": "#6c7086" },
+    "key": { "width": 5 },
+    "brightColor": false
+  },
+  "modules": [
+    "break",
+    { "type": "title", "format": "{user-name-colored}{at-symbol-colored}{host-name-colored}", "color": { "user": "#cba6f7", "at": "#6c7086", "host": "#89b4fa" } },
+    { "type": "custom", "format": "{#38;2;108;112;134}────────── system ──────────" },
+    { "type": "os", "key": " ", "keyColor": "#89b4fa" },
+    { "type": "kernel", "key": " ", "keyColor": "#89b4fa" },
+    { "type": "packages", "key": "󰏖 ", "keyColor": "#89b4fa" },
+    { "type": "uptime", "key": "󰅐 ", "keyColor": "#89b4fa" },
+
+    { "type": "custom", "format": "{#38;2;108;112;134}────────── desktop ─────────" },
+    { "type": "wm", "key": " ", "keyColor": "#a6e3a1" },
+    { "type": "shell", "key": " ", "keyColor": "#a6e3a1" },
+    { "type": "terminal", "key": " ", "keyColor": "#a6e3a1" },
+    { "type": "terminalfont", "key": " ", "keyColor": "#a6e3a1" },
+    { "type": "cursor", "key": "󰇀 ", "keyColor": "#a6e3a1" },
+
+    { "type": "custom", "format": "{#38;2;108;112;134}────────── hardware ────────" },
+    { "type": "cpu", "key": " ", "keyColor": "#fab387", "format": "{name} ({cores-logical})" },
+    { "type": "gpu", "key": "󰢮 ", "keyColor": "#fab387", "format": "{name}" },
+    { "type": "memory", "key": "󰍛 ", "keyColor": "#fab387" },
+    { "type": "disk", "key": "󰋊 ", "keyColor": "#fab387", "folders": "/" },
+    { "type": "battery", "key": "󰁹 ", "keyColor": "#fab387" },
+
+    "break",
+    { "type": "colors", "symbol": "circle", "paddingLeft": 2 }
+  ]
+}
