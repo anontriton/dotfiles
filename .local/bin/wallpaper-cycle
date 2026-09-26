@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Cycle swaybg through ~/wallpapers. Usage: wallpaper-cycle [next|prev|restore|<image file>]
+dir="$HOME/wallpapers"
+state="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper-current"
+link="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper-link"  # swaylock reads this
+
+mapfile -t walls < <(find "$dir" -maxdepth 1 -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort)
+(( ${#walls[@]} )) || exit 1
+
+current=$(cat "$state" 2>/dev/null)
+idx=-1
+for i in "${!walls[@]}"; do
+    [[ ${walls[$i]} == "$current" ]] && idx=$i && break
+done
+
+wall=
+case "${1:-next}" in
+    next)    idx=$(( (idx + 1) % ${#walls[@]} )) ;;
+    prev)    idx=$(( (idx - 1 + ${#walls[@]}) % ${#walls[@]} )) ;;
+    restore) (( idx < 0 )) && idx=0 ;;
+    *)       [[ -f $1 ]] || { echo "wallpaper-cycle: no such file: $1" >&2; exit 1; }
+             wall=$(realpath "$1") ;;
+esac
+
+wall=${wall:-${walls[$idx]}}
+mkdir -p "$(dirname "$state")"
+printf '%s\n' "$wall" > "$state"
+ln -sfn "$wall" "$link"
+
+# start the new swaybg before killing the old one to avoid a blank flash
+old=$(pgrep -x swaybg)
+swaybg -i "$wall" -m fill >/dev/null 2>&1 &
+disown
+sleep 0.3
+[[ -n $old ]] && kill $old

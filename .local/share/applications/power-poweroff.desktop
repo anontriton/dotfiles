@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Power Off
-Comment=Shut down the computer
-Exec=/home/iverson/.local/bin/power-confirm poweroff
-Icon=system-shutdown
-Terminal=false
-Categories=System;

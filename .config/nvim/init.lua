@@ -440,17 +440,18 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'ellisonleao/gruvbox.nvim' }
-  require('gruvbox').setup {
-    terminal_colors = false, -- Keep foot's palette in :terminal buffers (set below)
-    italic = {
-      comments = false, -- Disable italics in comments
+  vim.pack.add { { src = gh 'catppuccin/nvim', name = 'catppuccin' } }
+  require('catppuccin').setup {
+    flavour = 'mocha',
+    term_colors = false, -- Keep foot's palette in :terminal buffers (set below)
+    styles = {
+      comments = {}, -- Disable italics in comments
     },
   }
 
   -- Load the colorscheme here.
   vim.o.background = 'dark'
-  vim.cmd.colorscheme 'gruvbox'
+  vim.cmd.colorscheme 'catppuccin'
 
   -- Use foot's colors (see ~/.config/foot/foot.ini) inside :terminal buffers
   local foot_palette = {

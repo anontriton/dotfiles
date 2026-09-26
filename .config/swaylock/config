@@ -1,5 +1,5 @@
 # swaylock-effects, Catppuccin Mocha: blurred wallpaper + small ring shown only while typing
-image=/home/iverson/wallpapers/lucy.jpg
+image=/home/iverson/.cache/wallpaper-link
 scaling=fill
 effect-blur=10x3
 

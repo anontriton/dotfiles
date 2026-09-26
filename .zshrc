@@ -39,6 +39,7 @@ export FZF_DEFAULT_OPTS=" \
 zstyle ':fzf-tab:*' use-fzf-default-opts yes  # fzf-tab uses the colors above too
 
 alias ff='fastfetch'
+alias lock='swaylock'  # same lock screen as Super + Esc
 
 alias ls='eza --icons'
 alias ll='eza --icons -la'

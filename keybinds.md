@@ -74,6 +74,15 @@ Saved to `~/pictures/screenshots/` and copied to the clipboard.
 | `Print` | Full screen |
 | `Shift + Print` | Select region |
 
+### Wallpaper
+
+Cycles through `~/wallpapers/`. The last one picked comes back on login.
+
+| Keys | Action |
+|---|---|
+| `Super + w` | Next wallpaper |
+| `Super + Shift + w` | Previous wallpaper |
+
 ### Media Keys
 
 | Keys | Action |
@@ -105,18 +114,6 @@ Open with `Alt + Space`. Config: `~/.config/fuzzel/fuzzel.ini`.
 | `Shift + Enter` | Run exactly what you typed |
 | `Ctrl + h` / `Ctrl + w` | Delete character / word |
 | `Esc` | Close |
-
-### Power entries
-
-Search these by name in fuzzel. Entries live in `~/.local/share/applications/power-*.desktop`.
-
-| Entry | Action |
-|---|---|
-| `Lock` | Lock screen (no confirmation) |
-| `Reboot` | Asks **No / Yes**, then reboots |
-| `Power Off` | Asks **No / Yes**, then shuts down |
-
-In the confirmation box, `No` is first, so `Enter` or `Esc` cancels. Pick `Yes` with `Ctrl + j` or type `y`, then `Enter`.
 
 ## Foot (terminal)
 
@@ -171,6 +168,7 @@ Inside any fzf list: `Ctrl + j` / `Ctrl + k` move, `Enter` picks, `Esc` cancels.
 | Command | Action |
 |---|---|
 | `n` | nnn, staying in the folder you quit in |
+| `lock` | Lock the screen (same as `Super + Esc`) |
 | `fh` | Fuzzy search history (prints the match) |
 | `fcd` | Fuzzy pick a folder and cd into it |
 | `ll` / `lt` | Detailed list / tree view (eza) |

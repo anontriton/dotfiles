@@ -23,9 +23,9 @@
 
 }
 
-#window {
-  background-color: #313244; /* surface0 */
-  color: #cdd6f4; /* cdd6f4 */
+#title {
+  background-color: #1a1b26; /* foot background */
+  color: #cdd6f4; /* foot foreground */
 }
 
 #cpu {
