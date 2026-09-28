@@ -49,6 +49,8 @@ alias cat='bat'
 
 alias cd='z'
 
+alias del='trash-put'  # send to trash instead of deleting
+
 alias fh='history | fzf'                 # fuzzy search command history
 alias fcd='cd "$(fd --type d | fzf)"'    # fuzzy search and cd into a directory
 
